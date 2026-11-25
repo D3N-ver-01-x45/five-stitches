@@ -43,8 +43,11 @@
                         <x-sidebar-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">Orders</x-sidebar-link>
                         <x-sidebar-link soon>Product &amp; price</x-sidebar-link>
                         <x-sidebar-link soon>Shop settings</x-sidebar-link>
+                        {{-- The shop front page isn't built yet; "/" sends the team back to Orders. --}}
+                        <x-sidebar-link soon>View shop</x-sidebar-link>
+                    @else
+                        <x-sidebar-link :href="route('home')">View shop</x-sidebar-link>
                     @endcan
-                    <x-sidebar-link :href="url('/')">View shop</x-sidebar-link>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="flex w-full items-center rounded-[10px] p-3 text-left text-[15px] text-sage-light transition hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sage">

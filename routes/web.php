@@ -4,9 +4,19 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+// Front page. Until the shop home (Figma B1) is built:
+// guests → login form, team → orders, buyers → "shop opening soon".
 Route::get('/', function () {
-    return view('welcome');
-});
+    $user = request()->user();
+
+    if (! $user) {
+        return redirect()->route('login');
+    }
+
+    return $user->isStaff()
+        ? redirect()->route('admin.orders.index')
+        : view('shop.coming-soon');
+})->name('home');
 
 // After login everyone lands here: the team goes to the orders dashboard,
 // buyers go back to the shop.
