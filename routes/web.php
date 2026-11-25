@@ -2,24 +2,20 @@
 
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Shop\CartController;
+use App\Http\Controllers\Shop\ShopController;
 use Illuminate\Support\Facades\Route;
 
-// Front page. Until the shop home (Figma B1) is built:
-// guests → login form, team → orders, buyers → "shop opening soon".
-Route::get('/', function () {
-    $user = request()->user();
-
-    if (! $user) {
-        return redirect()->route('login');
-    }
-
-    return $user->isStaff()
-        ? redirect()->route('admin.orders.index')
-        : view('shop.coming-soon');
-})->name('home');
+// Shop (Figma B1–B3) — open to everyone, logged in or not.
+Route::get('/', [ShopController::class, 'index'])->name('home');
+Route::get('/products/{product}', [ShopController::class, 'show'])->name('products.show');
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart', [CartController::class, 'store'])->middleware('throttle:60,1')->name('cart.store');
+Route::patch('/cart/{product}', [CartController::class, 'update'])->middleware('throttle:60,1')->name('cart.update');
+Route::delete('/cart/{product}', [CartController::class, 'destroy'])->name('cart.destroy');
 
 // After login everyone lands here: the team goes to the orders dashboard,
-// buyers go back to the shop.
+// buyers go to the shop.
 Route::get('/dashboard', function () {
     return request()->user()->isStaff()
         ? redirect()->route('admin.orders.index')

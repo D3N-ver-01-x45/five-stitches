@@ -3,47 +3,55 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Database\Seeders\ProductSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Status report problems #1 and #2: the Laravel starter page showed on "/",
- * and a buyer clicking "Dashboard" just landed back on it with no way to log out.
+ * "/" is the shop front page (Figma B1) for everyone. Replaces the Laravel starter
+ * page and the buyer "Dashboard" loop (status report problems #1 and #2).
  */
 class HomePageTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guests_go_straight_to_the_login_form(): void
+    protected function setUp(): void
     {
-        $this->get('/')->assertRedirect(route('login'));
+        parent::setUp();
+        $this->seed(ProductSeeder::class);
     }
 
-    public function test_the_team_goes_straight_to_orders(): void
+    public function test_guests_see_the_shop_with_a_log_in_button(): void
     {
-        $this->actingAs(User::factory()->admin()->create())->get('/')->assertRedirect(route('admin.orders.index'));
-        $this->actingAs(User::factory()->seller()->create())->get('/')->assertRedirect(route('admin.orders.index'));
-    }
-
-    public function test_buyers_see_a_five_stitches_page_with_account_and_log_out(): void
-    {
-        $buyer = User::factory()->create(['name' => 'Juan Dela Cruz']);
-
-        $this->actingAs($buyer)->get('/')
+        $this->get('/')
             ->assertOk()
-            ->assertSee('Hi Juan, the shop opens soon')
-            ->assertSee(route('profile.edit'), false)
-            ->assertSee('action="'.route('logout').'"', false)
-            ->assertDontSee('Laravel')
-            ->assertDontSee('Dashboard');
+            ->assertSee('Handmade crochet, made one stitch at a time.')
+            ->assertSee('Tote Bag')
+            ->assertSee(route('login'), false)
+            ->assertDontSee('Laravel');
     }
 
-    public function test_buyer_dashboard_link_lands_on_that_page_not_a_loop(): void
+    public function test_buyers_see_the_shop_with_my_account(): void
     {
-        $buyer = User::factory()->create();
+        $this->actingAs(User::factory()->create())
+            ->get('/')
+            ->assertOk()
+            ->assertSee('My account')
+            ->assertDontSee('>Dashboard<', false);
+    }
 
-        $this->actingAs($buyer)->get('/dashboard')->assertRedirect('/');
-        $this->actingAs($buyer)->get('/')->assertOk();
+    public function test_the_team_sees_the_shop_with_a_dashboard_button(): void
+    {
+        $this->actingAs(User::factory()->seller()->create())
+            ->get('/')
+            ->assertOk()
+            ->assertSee(route('admin.orders.index'), false)
+            ->assertSee('Dashboard');
+    }
+
+    public function test_buyer_dashboard_link_goes_to_the_shop(): void
+    {
+        $this->actingAs(User::factory()->create())->get('/dashboard')->assertRedirect('/');
     }
 
     public function test_the_laravel_starter_page_is_gone(): void

@@ -40,7 +40,9 @@ Open http://127.0.0.1:8000/login.
 | Seller | `seller@fivestitches.test` | `password` | Orders dashboard |
 | Buyer | `buyer@fivestitches.test` | `password` | Back to the shop |
 
-`php artisan migrate:fresh --seed` also adds 15 sample orders. Never seed on the live site.
+`php artisan migrate:fresh --seed` also adds the 4 real products and 15 sample orders.
+
+On the live site, add only the real products with `php artisan db:seed --class=ProductSeeder`. Never seed on the live site.
 
 New sign-ups are always **buyers**. To make a teammate a seller, run:
 

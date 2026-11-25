@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
             $user->forceFill(['role' => $role, 'email_verified_at' => $user->email_verified_at ?? now()])->save();
         }
 
+        $this->call(ProductSeeder::class);
+
         if (Order::count() === 0) {
             Order::factory()->count(6)->status(OrderStatus::Shipped)->create(['created_at' => now()->subDays(12)]);
             Order::factory()->count(5)->status(OrderStatus::BeingCrocheted)->create(['created_at' => now()->subDays(4)]);
