@@ -5,26 +5,49 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ isset($title) ? $title.' · ' : '' }}{{ config('app.name', 'Five Stitches') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <!-- Fonts (same as Figma): Zilla Slab, Alegreya Italic, Inter -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@1,400;1,500&family=Inter:wght@400;500;600&family=Zilla+Slab:wght@600;700&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+    <body class="bg-cream font-sans text-muted antialiased">
+        <div class="flex min-h-screen">
+            <!-- Brand panel (desktop only) -->
+            <aside class="relative hidden w-[46%] max-w-[680px] overflow-hidden bg-ink lg:block">
+                <img src="{{ asset('images/makers.webp') }}" alt=""
+                     class="absolute inset-0 h-full w-full object-cover opacity-55">
+                <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/10"></div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
+                <div class="relative flex h-full flex-col justify-end p-14 text-cream">
+                    <p class="font-script text-xl italic text-sage">Crafted with Care, Stitched with Love</p>
+                    <h2 class="mt-3 font-heading text-5xl font-bold leading-tight text-white">
+                        Handmade crochet, made one stitch at a time.
+                    </h2>
+                    <p class="mt-5 max-w-md text-base leading-relaxed text-cream/85">
+                        Bags, pouches, keychains and flowers, handmade in Legazpi City.
+                    </p>
+                </div>
+            </aside>
+
+            <!-- Form side -->
+            <main class="flex flex-1 flex-col items-center justify-center px-6 py-10 sm:px-10">
+                <a href="{{ url('/') }}" class="mb-8 inline-block focus:outline-none focus-visible:ring-2 focus-visible:ring-forest rounded-lg">
+                    <x-application-logo class="h-auto w-[204px]" />
+                </a>
+
+                <div class="w-full max-w-[440px] rounded-2xl border border-line bg-white p-8 shadow-[0_1px_2px_rgba(39,51,39,0.04),0_8px_24px_rgba(39,51,39,0.06)] sm:p-10">
+                    {{ $slot }}
+                </div>
+
+                <p class="mt-8 text-center text-sm text-muted/80">
+                    &copy; {{ date('Y') }} Five Stitches · Barangay 42 – Rawis, Legazpi City
+                </p>
+            </main>
         </div>
     </body>
 </html>
