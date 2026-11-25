@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -7,9 +8,23 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// After login everyone lands here: the team goes to the orders dashboard,
+// buyers go back to the shop.
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return request()->user()->isStaff()
+        ? redirect()->route('admin.orders.index')
+        : redirect('/');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Shop admin (admin + sellers). Each action is also checked by OrderPolicy.
+Route::middleware(['auth', 'verified'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+        Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
+    });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

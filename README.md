@@ -34,11 +34,19 @@ Open http://127.0.0.1:8000/login.
 
 ### Demo login (local only)
 
-| Email | Password |
-|---|---|
-| `admin@fivestitches.test` | `password` |
+| Role | Email | Password | After login |
+|---|---|---|---|
+| Admin | `admin@fivestitches.test` | `password` | Orders dashboard |
+| Seller | `seller@fivestitches.test` | `password` | Orders dashboard |
+| Buyer | `buyer@fivestitches.test` | `password` | Back to the shop |
 
-This account is made by `php artisan db:seed`. Never seed it on the live site.
+`php artisan migrate:fresh --seed` also adds 15 sample orders. Never seed on the live site.
+
+New sign-ups are always **buyers**. To make a teammate a seller, run:
+
+```bash
+php artisan tinker --execute "App\Models\User::where('email','them@example.com')->first()->forceFill(['role'=>'seller'])->save();"
+```
 
 ## Branches
 
